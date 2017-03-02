@@ -21,7 +21,7 @@ class Files
     {
         $dir = dirname($path);
         if(!is_dir($dir)){
-            mkdir($dir,775,true);
+            mkdir($dir,0777,true);
         }
         file_put_contents($path,$string);
     }

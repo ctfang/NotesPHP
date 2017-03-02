@@ -15,17 +15,27 @@ class NotesPHP
 
     public static function build()
     {
-        $config = self::getConfig();
+        $config   = self::getConfig();
         $fileList = Directory::tree($config['base_path']);
-        $json   = self::getDom($fileList);
+        $json     = json_encode(self::getDom([$fileList]),320);
         Files::put($config['save_path'],$json);
     }
 
     private static function getDom($fileList)
     {
+        $list = [];
         foreach ($fileList as &$arrValue){
-            
+
+            if($arrValue['file_list']){
+                foreach ($arrValue['file_list'] as &$fileName){
+                    $list[] = ClassInfo::getInfo($fileName);
+                }
+            }
+            if($arrValue['dir_child']){
+                $list   = array_merge($list,self::getDom($arrValue['dir_child']));
+            }
         }
+        return $list;
     }
     /**
      * @param array $arr
@@ -35,17 +45,21 @@ class NotesPHP
     {
         $config = [
             'base_path'=>dirname(__DIR__),
-            'save_path'=>__DIR__.'/runtime/class.json',
+            'save_path'=>dirname(__DIR__).'/runtime/class.json',
+            'extension'=>'php',
         ];
         $config = array_merge($config,$arr);
         return self::$config = $config;
     }
 
-    protected static function getConfig()
+    public static function getConfig($field=null)
     {
         if(!isset(self::$config)){
             self::setConfig();
         }
-        return self::$config;
+        if( $field===null ){
+            return self::$config;
+        }
+        return self::$config[$field];
     }
 }

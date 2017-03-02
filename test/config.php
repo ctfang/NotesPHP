@@ -8,6 +8,6 @@ function p(...$data)
     }
     echo "</xmp>";
 }
-$path = (dirname(dirname(__DIR__))).'/business222';
+$path = dirname(__DIR__);
 \NotesPHP\NotesPHP::setConfig(['base_path'=>$path]);
 \NotesPHP\NotesPHP::build();

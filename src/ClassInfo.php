@@ -11,14 +11,48 @@ namespace NotesPHP;
 
 class ClassInfo
 {
-    public static function getInfo($nameSpace)
+    /**
+     * @var 命名空间映射
+     */
+    private static $_namespace;
+    /**
+     * 获取类信息
+     *
+     * @param $fileName
+     * @return ReflectionClass
+     */
+    public static function getInfo($fileName)
     {
-        $refle = self::getReflectionClass($nameSpace);
-        return $refle;
+        $arrPath    = pathinfo($fileName);
+        $nameSpace  = self::getNameSpace($arrPath['dirname'],$fileName);
+        $refle      = self::getReflectionClass($nameSpace.'\\'.$arrPath['filename']);
+        if(!$refle){
+
+        }
     }
 
     private static function getReflectionClass($nameSpace)
     {
-        return new ReflectionClass($nameSpace);
+        if( class_exists($nameSpace) ){
+            return new \ReflectionClass($nameSpace);
+        }
+        return false;
+    }
+
+    /**
+     * 获取目录命名空间
+     *
+     * @param $dir
+     * @param $fileName
+     */
+    private static function getNameSpace($dir,$fileName)
+    {
+        if(!isset(self::$_namespace[$dir])){
+            $string = file_get_contents($fileName);
+            $string = substr($string,0,strpos($string,';'));
+            $string = '\\'.end(explode(' ',$string));
+            self::$_namespace[$dir] = $string;
+        }
+        return self::$_namespace[$dir];
     }
 }

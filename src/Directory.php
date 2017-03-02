@@ -22,12 +22,14 @@ class Directory
         $lists = scandir($path);
         if( count($lists)<4 ) return ['dir_list'=>[],'file_list'=>[]];
         $dir   = $files = [];
+        $ext   = NotesPHP::getConfig('extension');
+        $extCt = strlen($ext);
         foreach ($lists as $key => $name) {
             if (in_array($name, ['.', '..']) ) {
                 unset($lists[$key]);
             } elseif( is_dir($dirPath = $path . '/' . $name) ) {
                 $dir[] = $dirPath;
-            }else{
+            }elseif( substr($dirPath,-$extCt)==$ext ){
                 $files[] = $dirPath;
             }
         }
