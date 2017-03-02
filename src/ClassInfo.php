@@ -8,7 +8,11 @@
 
 namespace NotesPHP;
 
-
+/**
+ * 获取类信息
+ *
+ * @package NotesPHP
+ */
 class ClassInfo
 {
     /**
@@ -26,11 +30,19 @@ class ClassInfo
         $arrPath    = pathinfo($fileName);
         $nameSpace  = self::getNameSpace($arrPath['dirname'],$fileName);
         $refle      = self::getReflectionClass($nameSpace.'\\'.$arrPath['filename']);
-        if(!$refle){
+        if(!$refle) return false;
+        $funList    = $refle->getMethods();
+        foreach ($funList as $item){
 
         }
     }
 
+    /**
+     * 获取反射对象
+     *
+     * @param $nameSpace
+     * @return bool|\ReflectionClass
+     */
     private static function getReflectionClass($nameSpace)
     {
         if( class_exists($nameSpace) ){
