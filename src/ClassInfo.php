@@ -38,17 +38,10 @@ class ClassInfo
             $arrClass['name'] = $nameSpace . '\\' . $arrPath['filename'];
             $arrClass['doccomment'] = $refle->getDocComment();
             foreach ($arr as $item) {
-                $funReflection = $refle->getMethod($item->name);
-                $fucntion['name'] = $item->name;
-                $parameter_temp = $funReflection->getParameters();
-                $fucntion['property'] = $refle->getProperty($funReflection);
-                if ($parameter_temp) {
-                    foreach ($parameter_temp as $parameter) {
-                        $fucntion['parameters'][] = $parameter->name;
-                    }
-                } else {
-                    $fucntion['parameters'] = [];
-                }
+                $funReflection          = $refle->getMethod($item->name);
+                $fucntion['name']       = $item->name;
+                $fucntion['property']   = $refle->getProperty($funReflection);
+                $fucntion['parameters'] = $refle->getParameters($funReflection);
                 $fucntion['doccomment'] = $funReflection->getDocComment();
                 $arrClass['function'][] = $fucntion;
             }

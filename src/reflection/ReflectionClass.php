@@ -8,7 +8,12 @@
 
 namespace NotesPHP\reflection;
 
-
+/**
+ * 反射对象处理
+ *
+ * Class ReflectionClass
+ * @package NotesPHP\reflection
+ */
 class ReflectionClass
 {
     private $reflection;
@@ -62,5 +67,24 @@ class ReflectionClass
     public function getProperty($class)
     {
         return !$class->isPublic() ? !$class->isPrivate() ? $class->isProtected() ?: 'protected' : 'private' : 'public';
+    }
+
+    /**
+     * 获取函数参数
+     *
+     * @param $class
+     * @return array
+     */
+    public function getParameters($class)
+    {
+        $parameter_temp = $class->getParameters();
+        if ($parameter_temp) {
+            foreach ($parameter_temp as $parameter) {
+                $fucntion[] = $parameter->name;
+            }
+        } else {
+            $fucntion = [];
+        }
+        return $fucntion;
     }
 }
