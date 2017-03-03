@@ -8,6 +8,8 @@
 
 namespace NotesPHP;
 
+use NotesPHP\reflection\ReflectionClass;
+
 /**
  * 获取类信息
  *
@@ -19,6 +21,7 @@ class ClassInfo
      * @var 命名空间映射
      */
     private static $_namespace;
+
     /**
      * 获取类信息
      *
@@ -27,29 +30,33 @@ class ClassInfo
      */
     public static function getInfo($fileName)
     {
-        $arrPath    = pathinfo($fileName);
-        $nameSpace  = self::getNameSpace($arrPath['dirname'],$fileName);
-        $refle      = self::getReflectionClass($nameSpace.'\\'.$arrPath['filename']);
-        if(!$refle) return false;
-        $funList    = $refle->getMethods();
-        foreach ($funList as $item){
-
-        }
-    }
-
-    /**
-     * 获取反射对象
-     *
-     * @param $nameSpace
-     * @return bool|\ReflectionClass
-     */
-    private static function getReflectionClass($nameSpace)
-    {
-        if( class_exists($nameSpace) ){
-            return new \ReflectionClass($nameSpace);
+        $arrPath = pathinfo($fileName);
+        $nameSpace = self::getNameSpace($arrPath['dirname'], $fileName);
+        if (class_exists($nameSpace . '\\' . $arrPath['filename'])) {
+            $refle = new ReflectionClass($nameSpace . '\\' . $arrPath['filename']);
+            $arr = $refle->getMethods();
+            $arrClass['name'] = $nameSpace . '\\' . $arrPath['filename'];
+            $arrClass['doccomment'] = $refle->getDocComment();
+            foreach ($arr as $item) {
+                $funReflection = $refle->getMethod($item->name);
+                $fucntion['name'] = $item->name;
+                $parameter_temp = $funReflection->getParameters();
+                $fucntion['property'] = $refle->getProperty($funReflection);
+                if ($parameter_temp) {
+                    foreach ($parameter_temp as $parameter) {
+                        $fucntion['parameters'][] = $parameter->name;
+                    }
+                } else {
+                    $fucntion['parameters'] = [];
+                }
+                $fucntion['doccomment'] = $funReflection->getDocComment();
+                $arrClass['function'][] = $fucntion;
+            }
+            return $arrClass;
         }
         return false;
     }
+
 
     /**
      * 获取目录命名空间
@@ -57,12 +64,12 @@ class ClassInfo
      * @param $dir
      * @param $fileName
      */
-    private static function getNameSpace($dir,$fileName)
+    private static function getNameSpace($dir, $fileName)
     {
-        if(!isset(self::$_namespace[$dir])){
+        if (!isset(self::$_namespace[$dir])) {
             $string = file_get_contents($fileName);
-            $string = substr($string,0,strpos($string,';'));
-            $string = '\\'.end(explode(' ',$string));
+            $string = substr($string, 0, strpos($string, ';'));
+            $string = '\\' . end(explode(' ', $string));
             self::$_namespace[$dir] = $string;
         }
         return self::$_namespace[$dir];

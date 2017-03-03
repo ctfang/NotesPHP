@@ -17,10 +17,17 @@ class NotesPHP
     {
         $config   = self::getConfig();
         $fileList = Directory::tree($config['base_path']);
-        $json     = json_encode(self::getDom([$fileList]),320);
-        Files::put($config['save_path'],$json);
+        $doc      = self::getDom([$fileList]);
+        Files::put($config['save_path'],self::saveString($doc));
     }
 
+    private static function saveString(array $data)
+    {
+        switch (self::getConfig('save_type')){
+            case 'array':   return "<?php\n".var_export($data,TRUE).';';
+            case 'json':    return json_encode($data,320);
+        }
+    }
     private static function getDom($fileList)
     {
         $list = [];
@@ -28,7 +35,10 @@ class NotesPHP
 
             if($arrValue['file_list']){
                 foreach ($arrValue['file_list'] as &$fileName){
-                    $list[] = ClassInfo::getInfo($fileName);
+                    $info = ClassInfo::getInfo($fileName);
+                    if($info){
+                        $list[] = ClassInfo::getInfo($fileName);
+                    }
                 }
             }
             if($arrValue['dir_child']){
@@ -47,6 +57,7 @@ class NotesPHP
             'base_path'=>dirname(__DIR__),
             'save_path'=>dirname(__DIR__).'/runtime/class.json',
             'extension'=>'php',
+            'save_type'=>'array'
         ];
         $config = array_merge($config,$arr);
         return self::$config = $config;

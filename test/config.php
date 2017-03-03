@@ -8,6 +8,15 @@ function p(...$data)
     }
     echo "</xmp>";
 }
-$path = dirname(__DIR__);
-\NotesPHP\NotesPHP::setConfig(['base_path'=>$path]);
+\NotesPHP\NotesPHP::setConfig([
+    'base_path'=>dirname(dirname(__DIR__)),
+    'save_path'=>dirname(__DIR__).'/runtime/class.php',
+    'extension'=>'php',
+    'save_type'=>'array',
+    ]);
+
 \NotesPHP\NotesPHP::build();
+
+p(\NotesPHP\NotesPHP::getConfig());
+
+p($str = include '../runtime/class.php');
