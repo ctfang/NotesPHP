@@ -21,7 +21,7 @@ class Files
     {
         $dir = dirname($path);
         if(!is_dir($dir)){
-            mkdir($dir,0777,true);
+            mkdir($dir,775,true);
         }
         file_put_contents($path,$string);
     }
@@ -38,25 +38,5 @@ class Files
             return file_get_contents($path);
         }
         return '';
-    }
-
-    /**
-     * 安路径获取类名称
-     *
-     * @param $path
-     */
-    public static function getClassName($path)
-    {
-
-    }
-
-    /**
-     * 获取命名空间
-     * 
-     * @param $path
-     */
-    public static function getNameSpace($path)
-    {
-
     }
 }

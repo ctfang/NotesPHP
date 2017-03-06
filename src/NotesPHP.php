@@ -13,6 +13,9 @@ class NotesPHP
 {
     protected static $config;
 
+    /**
+     * 创建
+     */
     public static function build()
     {
         $config   = self::getConfig();
@@ -67,12 +70,7 @@ class NotesPHP
      */
     public static function setConfig(array $arr=[])
     {
-        $config = [
-            'base_path'=>dirname(__DIR__),
-            'save_path'=>dirname(__DIR__).'/runtime/class.json',
-            'extension'=>'php',
-            'save_type'=>'array'
-        ];
+        $config = include_once __DIR__.'/../config/config.php';
         $config = array_merge($config,$arr);
         return self::$config = $config;
     }
